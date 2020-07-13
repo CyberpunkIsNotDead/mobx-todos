@@ -1,15 +1,8 @@
-import {
-  observable,
-  action,
-  computed,
-  decorate,
-  autorun
-} from 'mobx'
+import { observable, action, computed, decorate, autorun } from "mobx";
 
 class TodoStore {
-
   constructor() {
-    autorun(() => this.fetchTodos())
+    autorun(() => this.fetchTodos());
   }
 
   todos = {
@@ -34,64 +27,64 @@ class TodoStore {
       // },
     ],
 
-    isLoading: false
+    isLoading: false,
+  };
+
+  setTodos(todos) {
+    const newTodos = { ...this.todos, ...todos };
+    this.todos = newTodos;
   }
 
-  // setTodos(todos) {
-  //   const newTodos = {...this.todos, data: }
-  // }
-
   fetchTodos() {
-    this.todos = {...this.todos, isLoading: true}
-    fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
-    .then(response => response.json())
-    .then(json => {
-      this.todos = {
-        ...this.todos,
-        data: json,
-        isLoading: false
-      }
-    })
+    this.setTodos({ isLoading: true });
+    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .then((response) => response.json())
+      .then((json) => {
+        this.setTodos({
+          data: json,
+          isLoading: false,
+        });
+      });
   }
 
   addTodo(title) {
-    const newId = Date.now()
+    const newId = Date.now();
     const newTodo = {
-      "userId": 1,
-      "id": newId,
-      "title": title,
-      "completed": false
-    }
-    this.todos.data.push(newTodo)
+      userId: 1,
+      id: newId,
+      title: title,
+      completed: false,
+    };
+    const newData = [...this.getAll, newTodo];
+    this.setTodos({ data: newData });
   }
-  
+
   delTodo(id) {
-    const newTodos = this.todos.data
-      .filter(todo => todo.id !== id)
-    this.todos.data = newTodos
+    const newData = this.getAll.filter((todo) => todo.id !== id);
+    this.setTodos({ data: newData });
   }
 
   completeTodo(id) {
-    const newTodos = this.todos.data.map(todo => {
+    const newData = this.getAll.map((todo) => {
       if (todo.id === id) {
-        todo.completed = !todo.completed 
-      };
+        todo.completed = !todo.completed;
+      }
       return todo;
-    })
+    });
 
-    this.todos.data = newTodos
+    this.setTodos({ data: newData });
   }
 
   get getAll() {
-    return this.todos.data
+    return this.todos.data;
   }
-  
+
   get getActive() {
-    return this.todos.data.filter(todo => !todo.completed)
+    return this.todos.data.filter((todo) => !todo.completed);
   }
-  
+
   get getCompleted() {
-    return this.todos.data.filter(todo => todo.completed)
+    return this.todos.data.filter((todo) => todo.completed);
   }
 }
 
@@ -101,7 +94,7 @@ const todoStore = decorate(TodoStore, {
   addTodo: action,
   delTodo: action,
   getActive: computed,
-  getCompleted: computed
-})
+  getCompleted: computed,
+});
 
-export default new todoStore()
+export default new todoStore();

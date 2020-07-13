@@ -1,9 +1,8 @@
-import React from 'react'
-import { observer } from 'mobx-react'
-import TodoItem from './TodoItem'
+import React from "react";
+import { observer } from "mobx-react";
+import TodoItem from "./TodoItem";
 
-function TodoList({todos}) {
-
+function TodoList({ todos }) {
   return (
     <>
       <ul
@@ -13,14 +12,12 @@ function TodoList({todos}) {
           padding: 0,
         }}
       >
-        {
-          todos.map((todo, index) => (
-            <TodoItem todo={todo} key={index} />
-          ))
-        }
+        {todos.map((todo, index) => (
+          <TodoItem todo={todo} key={index} />
+        ))}
       </ul>
     </>
-  )
+  );
 }
 
-export default observer(TodoList)
+export default observer(TodoList);
