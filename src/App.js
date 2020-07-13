@@ -1,38 +1,25 @@
-import React, { useEffect } from "react";
+import React from "react";
 import TodoList from "./components/TodoList";
 import AddTodo from "./components/AddTodo";
-import TodoStore from "./store/TodoStore";
-import { observer, useLocalStore, useObserver } from "mobx-react";
+import { observer, inject } from "mobx-react";
 
-function App() {
+function App({ TodoStore }) {
   const isLoading = TodoStore.todos.isLoading;
-
-  const todos = useLocalStore(() => ({
-    data: [],
-    setTodos(todos) {
-      this.data = todos;
-    },
-  }));
+  console.log(TodoStore.filtered);
 
   const showActive = () => {
-    const newTodos = TodoStore.getActive;
-    todos.setTodos(newTodos);
+    TodoStore.filterTodos("active");
   };
 
   const showCompleted = () => {
-    const newTodos = TodoStore.getCompleted;
-    todos.setTodos(newTodos);
+    TodoStore.filterTodos("completed");
   };
 
   const showAll = () => {
-    const newTodos = TodoStore.getAll;
-    todos.setTodos(newTodos);
+    TodoStore.filterTodos("all");
   };
 
-  // eslint-disable-next-line
-  useEffect(() => showAll(), [TodoStore.getAll]);
-
-  return useObserver(() => (
+  return (
     <div className="App">
       <AddTodo />
       <div>
@@ -40,9 +27,9 @@ function App() {
         <button onClick={() => showCompleted()}>show completed</button>
         <button onClick={() => showAll()}>show all</button>
       </div>
-      {isLoading ? <p>loading...</p> : <TodoList todos={todos.data} />}
+      {isLoading ? <p>loading...</p> : <TodoList todos={TodoStore.filtered} />}
     </div>
-  ));
+  );
 }
 
-export default observer(App);
+export default inject("TodoStore")(observer(App));

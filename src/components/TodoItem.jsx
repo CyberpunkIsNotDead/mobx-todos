@@ -1,7 +1,7 @@
 import React from "react";
-import TodoStore from "../store/TodoStore";
+import { inject, observer } from "mobx-react";
 
-export default function TodoItem({ todo }) {
+function TodoItem({ todo, TodoStore }) {
   return (
     <li
       style={{
@@ -22,3 +22,5 @@ export default function TodoItem({ todo }) {
     </li>
   );
 }
+
+export default inject("TodoStore")(observer(TodoItem));

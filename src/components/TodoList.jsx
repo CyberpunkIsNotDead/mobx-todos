@@ -1,8 +1,8 @@
 import React from "react";
-import { observer } from "mobx-react";
 import TodoItem from "./TodoItem";
 
 function TodoList({ todos }) {
+  console.log(todos);
   return (
     <>
       <ul
@@ -20,4 +20,4 @@ function TodoList({ todos }) {
   );
 }
 
-export default observer(TodoList);
+export default TodoList;

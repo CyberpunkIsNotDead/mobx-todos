@@ -1,8 +1,17 @@
-import { observable, action, computed, decorate, autorun } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  decorate,
+  autorun,
+  reaction,
+} from "mobx";
 
 class TodoStore {
   constructor() {
-    autorun(() => this.fetchTodos());
+    autorun(() => {
+      this.fetchTodos().then(() => this.filterTodos("all"));
+    });
   }
 
   todos = {
@@ -35,16 +44,16 @@ class TodoStore {
     this.todos = newTodos;
   }
 
-  fetchTodos() {
+  async fetchTodos() {
     this.setTodos({ isLoading: true });
-    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
-      .then((response) => response.json())
-      .then((json) => {
-        this.setTodos({
-          data: json,
-          isLoading: false,
-        });
-      });
+    const response = await fetch(
+      "https://jsonplaceholder.typicode.com/todos?_limit=10"
+    );
+    const json = await response.json();
+    this.setTodos({
+      data: json,
+      isLoading: false,
+    });
   }
 
   addTodo(title) {
@@ -86,6 +95,29 @@ class TodoStore {
   get getCompleted() {
     return this.todos.data.filter((todo) => todo.completed);
   }
+
+  filtered = [];
+
+  setFiltered = reaction(
+    () => this.todos.data,
+    () => this.filterTodos("all")
+  );
+
+  filterTodos(filterBy) {
+    switch (filterBy) {
+      case "all":
+        this.filtered = this.getAll;
+        break;
+      case "active":
+        this.filtered = this.getActive;
+        break;
+      case "completed":
+        this.filtered = this.getCompleted;
+        break;
+      default:
+        this.filtered = this.getAll;
+    }
+  }
 }
 
 const todoStore = decorate(TodoStore, {
@@ -95,6 +127,8 @@ const todoStore = decorate(TodoStore, {
   delTodo: action,
   getActive: computed,
   getCompleted: computed,
+  filterTodos: action,
+  filtered: observable,
 });
 
 export default new todoStore();
