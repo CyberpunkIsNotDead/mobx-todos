@@ -81,6 +81,10 @@ class TodoStore {
 
     this.todos.data = newTodos
   }
+
+  get getAll() {
+    return this.todos.data
+  }
   
   get getActive() {
     return this.todos.data.filter(todo => !todo.completed)

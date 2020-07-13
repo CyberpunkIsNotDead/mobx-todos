@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import TodoList from './components/TodoList'
 import AddTodo from './components/AddTodo';
 import TodoStore from './store/TodoStore'
 import { observer, useLocalStore, useObserver } from 'mobx-react';
 
 function App() {
-  const data = TodoStore.todos.data
   const isLoading = TodoStore.todos.isLoading
 
   const todos = useLocalStore(() => ({
-    data: data,
+    data: [],
     setTodos(todos) {
       this.data = todos
     }
@@ -26,11 +25,11 @@ function App() {
   }
 
   const showAll = () => {
-    const newTodos = TodoStore.todos.data
+    const newTodos = TodoStore.getAll
     todos.setTodos(newTodos)
   }
 
-  useEffect(() => showAll(), [TodoStore.todos.data])
+  useEffect(() => showAll())
 
   return useObserver(() => (
     <div className="App">
@@ -56,25 +55,3 @@ function App() {
 }
 
 export default observer(App);
-
-// function App2() {
-
-//   const [state, setState] = useState(null)
-
-//   const show = () => {
-//     setState(true)
-//   }
-
-//   return (
-//     <>
-//     <button
-//       onClick={_ => show()}
-//     >click me</button>
-//     {
-//       state ? <App /> : null
-//     }
-//     </>
-//   )
-// }
-
-// export default observer(App2)
